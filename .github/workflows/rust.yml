@@ -134,6 +134,6 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: rlctl-${{ matrix.target }}.tgz
-        path: target/rlctl-${{ matrix.target }}.tgz
+        path: rlctl-${{ matrix.target }}.tgz
 
 

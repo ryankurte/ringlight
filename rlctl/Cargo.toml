@@ -1,13 +1,14 @@
 [package]
 name = "rlctl"
+description = "SAMD21/WS2812 ringlight control utility"
+repository = "https://github.com/ryankurte/ringlight"
 version = "0.1.0"
 authors = ["ryan <ryan@kurte.nz>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MPL-2.0"
 
 [dependencies]
-hid-cli = { git = "https://github.com/ryankurte/rust-hid-cli.git" }
+hid-cli = "0.1.0"
 structopt = "0.3.20"
 simplelog = "0.8.0"
 log = "0.4.11"
