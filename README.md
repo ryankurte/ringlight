@@ -10,16 +10,15 @@ A low-cost and low-difficulty webcam ringlight based on a [3d-printed support](h
 - [rlfw](rlfw/) contains the Xiao (SAMD21) ringlight firmware
 - [rlclt](rlctl/) contains a ringlight control utility
 
-The ringlight firmware runs on a seed xiao board, with WS2812 LEDs connected to pin 10. Firmware can be downloaded from the [releases](https://github.com/ryankurte/ringlight/releases/latest) page and installed via the uf2 bootloader.
-
-The ringlight control utility can be installed from source via `cargo install rlctl`, or downloaded from the [releases](https://github.com/ryankurte/ringlight/releases/latest) page.
+The ringlight firmware runs on a seed xiao board, with WS2812 LEDs connected to pin 10. Firmware can be downloaded from the [releases](https://github.com/ryankurte/ringlight/releases/latest) page and installed via the uf2 bootloader. The ringlight control utility can be installed from source via `cargo install rlctl`, or downloaded from the [releases](https://github.com/ryankurte/ringlight/releases/latest) page.
 
 Usage:
 
 - `rlctl set-brightness BRIGHTNESS` to set brightness
 - `rlctl set-rgb R G B` to set RGB colour output
-- `rlctl help` to show help messages
+- `rlctl help` to show help message / options
 
+Note that values must be between `0-255` (or `0x00-0xff`).
 
 ### Linux / udev rules
 
@@ -33,14 +32,13 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="1209", ATTR{idProduct}=="fff1", MODE="0660", 
 
 ### Dependencies
 
-- `rust` with target `thumbv6m-none-eabi` (see `rustup target add`)
-- `libusb` via `sudo apt install libusb-dev libusb-1.0`, `brew install libusb`, or `vcpkg install libsusb`
+- `rust` with target `thumbv6m-none-eabi` (via `rustup target add thumbv6m-none-eabi`)
+- `libusb` via `sudo apt install libusb-dev libusb-1.0`, `brew install libusb`, or `vcpkg install libsusb` (and maybe a `LIBUSB_DIR` setting on windows)
 
 
 ### Compiling / Flashing Firmware
 
 Note that `memory.x` must be edited to remove the flash offset if your xiao-m0 does not currently have the [bootloader](https://github.com/Seeed-Studio/ArduinoCore-samd/blob/master/bootloaders/XIAOM0/bootloader-XIAO_m0-v3.7.0-33-g90ff611-dirty.bin) loaded.
-
 In most cases you should be able to download the linked uf2 firmware above and copy this onto the disk presented by the xiao device. To enter bootloader mode you may need to short the GND/RESET pads on the back of the device twice in quick succession.
 
 Other options:

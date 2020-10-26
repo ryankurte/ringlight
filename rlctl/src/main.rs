@@ -108,7 +108,7 @@ fn main() {
             d.write(&cmd)
         },
         Command::SetBrightness{ b } => {
-            info!("Set brightness");
+            info!("Set brightness: {}", b);
             let cmd = [0x00, 0x03, b];
             d.write(&cmd)
         },

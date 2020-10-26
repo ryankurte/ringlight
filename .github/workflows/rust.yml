@@ -71,7 +71,7 @@ jobs:
             os: ubuntu-latest
             output: rlctl
             use_cross: true
-            experimental: false
+            experimental: true
           - target: x86_64-apple-darwin
             os: macos-latest
             output: rlctl
