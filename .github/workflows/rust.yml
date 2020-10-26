@@ -22,11 +22,13 @@ jobs:
           target: thumbv6m-none-eabi
           override: true
           components: llvm-tools-preview
+
       - uses: actions-rs/install@v0.1
         with:
           crate: cargo-binutils
           version: latest
           use-tool-cache: true
+
       - uses: actions-rs/install@v0.1
         with:
           crate: uf2conv
@@ -35,23 +37,17 @@ jobs:
 
       - name: Build firmware
         uses: actions-rs/cargo@v1
-        with:
-          use-cross: true
-          command: build
-          args: --manifest-path=rlfw/Cargo.toml --target=thumbv6m-none-eabi  --release
- 
-      - name: Generate .bin file
         run: |
-          objcopy rlfw/target/thumbv6m-none-eabi/release/rlfw -I elf32-little -O binary rlfw-$GITHUB_REF_SLUG.bin
-          uf2conv rlfw-$GITHUB_REF_SLUG.bin --base 0x2000 --output rlfw-$GITHUB_REF_SLUG.uf2
+          cd rlfw
+          cargo objcopy --target=thumbv6m-none-eabi --release -- -O binary rlfw-${GITHUB_REF_SLUG}.bin
+          uf2conv rlfw-${GITHUB_REF_SLUG}.bin --base 0x2000 --output rlfw-${GITHUB_REF_SLUG}.uf2
           ls
-     
+
       - name: Upload firmware artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: rlfw-$GITHUB_REF_SLUG.tgz
+          name: rlfw-${GITHUB_REF_SLUG}.tgz
           path: |
-            rlfw/target/thumbv6m-none-eabi/release/rlfw
             *.bin
             *.uf2
   
@@ -137,13 +133,16 @@ jobs:
         use-cross: ${{ matrix.use_cross }}
         command: build
         args: --manifest-path=rlctl/Cargo.toml --target ${{ matrix.target }} --release
-      
+
+    - name: Copy output file
+      run: |
+        cp rlctl/target/${{ matrix.target }}/release/${{ matrix.output }} ${{ matrix.output }}
+
     - name: Upload utility artifacts
       uses: actions/upload-artifact@v1
       with:
-        name: rlctl-${{ matrix.target }}.tgz
-        path: |
-          rlctl/target/${{ matrix.target }}/release/${{ matrix.output }}
+        name: rlctl-${GITHUB_REF_SLUG}-${{ matrix.target }}
+        path: ${{ matrix.output }}
 
   release:
     name: Create release
@@ -151,6 +150,7 @@ jobs:
     if: ${{ github.event == 'push' && startsWith(github.ref, 'refs/tags/v') }}
     needs: [ "build-cli", "build-fw" ]
     steps:
+
       - name: Create Release
         uses: actions/create-release@v1
         id: create_release
