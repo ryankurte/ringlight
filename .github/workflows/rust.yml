@@ -23,6 +23,7 @@ jobs:
           toolchain: stable
           target: thumbv6m-none-eabi
           override: true
+          components: llvm-tools-preview
       - uses: actions-rs/install@v0.1
         with:
           crate: cargo-binutils
@@ -34,14 +35,17 @@ jobs:
           version: latest
           use-tool-cache: true
 
-      - name: Build binary
+      - name: Build firmware
         uses: actions-rs/cargo@v1
         with:
           use-cross: true
-          command: objcopy
-          args: --bin rlfw --release --target=thumbv6m-none-eabi -- -O binary rlfw-$GITHUB_REF_SLUG.bin
+          command: build
+          args: --manifest-path=rlfw/Cargo.toml --target=thumbv6m-none-eabi  --release
+ 
+      - name: Generate .bin file
+        run: objcopy rlfw/target/thumbv6m-none-eabi/release/rlfw -I elf32-little -O binary rlfw-$GITHUB_REF_SLUG.bin
 
-      - name: Build u2f file
+      - name: Generate u2f file
         run: uf2conv rlfw-$GITHUB_REF_SLUG.bin --base 0x2000 --output rlfw-$GITHUB_REF_SLUG.uf2
      
       - name: Upload firmware artifacts
@@ -65,22 +69,22 @@ jobs:
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-            output: rlcli
+            output: rlctl
             use_cross: false
             experimental: false
           - target: armv7-unknown-linux-gnueabihf 
             os: ubuntu-latest
-            output: rlcli
+            output: rlctl
             use_cross: true
             experimental: false
           - target: x86_64-apple-darwin
             os: macos-latest
-            output: rlcli
+            output: rlctl
             use_cross: false
             experimental: true
           - target: x86_64-pc-windows-msvc
             os: windows-latest
-            output: rlcli.exe
+            output: rlctl.exe
             use_cross: false
             experimental: true
 
@@ -111,10 +115,10 @@ jobs:
       with:
         use-cross: ${{ matrix.use_cross }}
         command: build
-        args: --release --target ${{ matrix.target }}
+        args: --manifest-path=rlctl/Cargo.toml --target ${{ matrix.target }} --release
     
     - name: Create archives
-      run: tar -cvf target/rlcli-${{ matrix.target }}.tgz -C target/${{ matrix.target }}/release/ ${{ matrix.output }}
+      run: tar -cvf rlctl/target/rlcli-${{ matrix.target }}.tgz -C rlctl/target/${{ matrix.target }}/release/ ${{ matrix.output }}
       
     - name: Upload utility artifacts
       uses: actions/upload-artifact@v1
