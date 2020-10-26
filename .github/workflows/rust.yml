@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: nightly
           target: thumbv6m-none-eabi
           override: true
           components: llvm-tools-preview
@@ -116,7 +116,7 @@ jobs:
     
     - name: Install libusb (apt)
       if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: sudo apt install -y libusb-dev
+      run: sudo apt install -y libusb-1.0 libusb-dev
 
     - name: Install libusb (vcpkg)
       if: ${{ matrix.os == 'windows-latest' }}
@@ -134,7 +134,7 @@ jobs:
         args: --manifest-path=rlctl/Cargo.toml --target ${{ matrix.target }} --release
     
     - name: Create archives
-      run: tar -cvf rlctl-${{ matrix.target }}.tgz -C rlctl/target/${{ matrix.target }}/release/ ${{ matrix.output }}
+      run: tar -cvf rlctl-${{ matrix.target }}.tgz -C target/${{ matrix.target }}/release/ ${{ matrix.output }}
       
     - name: Upload utility artifacts
       uses: actions/upload-artifact@v1
