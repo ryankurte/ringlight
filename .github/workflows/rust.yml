@@ -109,7 +109,23 @@ jobs:
       with:
         key: target-${{ matrix.os }}-${{ matrix.target }}
         path: ./target
+
+    - name: Install libusb (brew)
+      if: ${{ matrix.os == 'macos-latest' }}
+      run: brew install libusb
     
+    - name: Install libusb (apt)
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+      run: apt install -y libusb-dev
+
+    - name: Install libusb (vcpkg)
+      if: ${{ matrix.os == 'windows-latest' }}
+      run: apt install -y libusb-dev
+      uses: lukka/run-vcpkg@v4
+      with:
+        vcpkgArguments: libusb
+        vcpkgTriplet: x64-windows-static-md
+
     - name: Build release
       uses: actions-rs/cargo@v1
       with:
