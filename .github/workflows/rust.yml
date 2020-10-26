@@ -64,7 +64,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: rlfw/rlfw0.uf2
+          file: rlfw/rlfw.uf2
           asset_name: rlfw.uf2
           tag: ${{ github.ref }}
           overwrite: true
@@ -158,6 +158,7 @@ jobs:
     - name: Copy output file
       run: |
         cp rlctl/target/${{ matrix.target }}/release/${{ matrix.output }} ${{ matrix.output }}-${{ matrix.target }}
+        tar -cvf rlctl-${{ matrix.target }}.tgz ${{ matrix.output }}-${{ matrix.target }}
 
     - name: Upload utility artifacts
       uses: actions/upload-artifact@v1
@@ -170,8 +171,8 @@ jobs:
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ${{ matrix.output }}-${{ matrix.target }}
-        asset_name: ${{ matrix.output }}-${{ matrix.target }}
+        file: rlctl-${{ matrix.target }}.tgz
+        asset_name: rlctl-${{ matrix.target }}.tgz
         tag: ${{ github.ref }}
         overwrite: true
 
