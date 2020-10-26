@@ -1,0 +1,123 @@
+name: Rust
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-fw:
+    runs-on: ubuntu-latest
+    defaults:
+     run:
+      working-directory: rlfw
+    
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: thumbv6m-none-eabi
+          override: true
+      - uses: actions-rs/install@v0.1
+        with:
+          crate: cargo-binutils
+          version: latest
+          use-tool-cache: true
+      - uses: actions-rs/install@v0.1
+        with:
+          crate: u2fconv-rs
+          version: latest
+          use-tool-cache: true
+
+      - name: Build binary
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: objcopy
+          args: --bin rlfw --release --target=thumbv6m-none-eabi -- -O binary rlfw-$GITHUB_REF_SLUG.bin
+
+      - name: Build u2f file
+        run: uf2conv rlfw-$GITHUB_REF_SLUG.bin --base 0x2000 --output rlfw-$GITHUB_REF_SLUG.uf2
+     
+      - name: Upload firmware artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: rlfw-$GITHUB_REF_SLUG.uf2
+          path: rlfw-$GITHUB_REF_SLUG.uf2
+  
+
+  build-cli:
+
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+    defaults:
+     run:
+       working-directory: rlctl
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            output: rlcli
+            use_cross: false
+            experimental: false
+          - target: armv7-unknown-linux-gnueabihf 
+            os: ubuntu-latest
+            output: rlcli
+            use_cross: true
+            experimental: false
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            output: rlcli
+            use_cross: false
+            experimental: true
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            output: rlcli.exe
+            use_cross: false
+            experimental: true
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Configure toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: nightly
+        target:  ${{ matrix.target }}
+        override: true
+    
+    - name: Configure cargo cache 
+      uses: actions/cache@v1
+      with:
+        key: cargo-${{ matrix.os }}-${{ matrix.target }}
+        path: ${{ env.HOME }}/.cargo"
+
+    - name: Configure target cache
+      uses: actions/cache@v1
+      with:
+        key: target-${{ matrix.os }}-${{ matrix.target }}
+        path: ./target
+    
+    - name: Build release
+      uses: actions-rs/cargo@v1
+      with:
+        use-cross: ${{ matrix.use_cross }}
+        command: build
+        args: --release --target ${{ matrix.target }}
+    
+    - name: Create archives
+      run: tar -cvf target/rlcli-${{ matrix.target }}.tgz -C target/${{ matrix.target }}/release/ ${{ matrix.output }}
+      
+    - name: Upload utility artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: rlcli-${{ matrix.target }}.tgz
+        path: target/rlcli-${{ matrix.target }}.tgz
