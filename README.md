@@ -6,13 +6,14 @@ A SAMD21/WS2812 based, low-cost and low-difficulty USB webcam ringlight. Designe
 
 The ringlight firmware runs on a seed xiao board, with WS2812 LEDs connected to pin 10. Firmware can be downloaded from the [releases](https://github.com/ryankurte/ringlight/releases/latest) page and installed via the uf2 bootloader. The ringlight control utility can be installed from source via `cargo install rlctl`, or downloaded from the [releases](https://github.com/ryankurte/ringlight/releases/latest) page.
 
-![IMG_0097](https://user-images.githubusercontent.com/860620/97136092-1002b900-17b7-11eb-9710-67b2d2f5ec6b.jpg)
-![IMG_0098](https://user-images.githubusercontent.com/860620/97136097-109b4f80-17b7-11eb-9a4b-84f59c66cc1e.jpg)
-
 Parts:
 - [3d-printed support](https://cad.onshape.com/documents/8d8e1210feb9aa656091cb68/w/f6f89561e16627434c69d84b/e/2f141cae78ba41f703d6d9aa)
 - [seed studio xiao-m0](https://wiki.seeedstudio.com/Seeeduino-XIAO)
 - [24-led WS2812 ring](https://www.aliexpress.com/item/33006920763.html?spm=a2g0s.9042311.0.0.535d4c4dpqgWA9).
+
+Images:
+![IMG_0097](https://user-images.githubusercontent.com/860620/97136092-1002b900-17b7-11eb-9710-67b2d2f5ec6b.jpg)
+![IMG_0098](https://user-images.githubusercontent.com/860620/97136097-109b4f80-17b7-11eb-9a4b-84f59c66cc1e.jpg)
 
 
 ## Getting Started
