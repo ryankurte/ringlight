@@ -47,8 +47,8 @@ jobs:
       - name: Build firmware
         run: |
           cd rlfw
-          cargo objcopy --target=thumbv6m-none-eabi --release -- -O binary rlfw-${{ github.ref }}.bin
-          uf2conv rlfw-${{ github.ref }}.bin --base 0x2000 --output rlfw-${{ github.ref }}.uf2
+          cargo objcopy --target=thumbv6m-none-eabi --release -- -O binary rlfw.bin
+          uf2conv rlfw.bin --base 0x2000 --output rlfw.uf2
           ls
 
       - name: Upload firmware artifacts
@@ -64,8 +64,8 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: rlfw/rlfw0-${{ github.ref }}.uf2
-          asset_name: rlfw-${{ github.ref }}.uf2
+          file: rlfw/rlfw0.uf2
+          asset_name: rlfw.uf2
           tag: ${{ github.ref }}
           overwrite: true
   
@@ -157,21 +157,21 @@ jobs:
 
     - name: Copy output file
       run: |
-        cp rlctl/target/${{ matrix.target }}/release/${{ matrix.output }} ${{ matrix.output }}-${{ github.ref }}-${{ matrix.target }}
+        cp rlctl/target/${{ matrix.target }}/release/${{ matrix.output }} ${{ matrix.output }}-${{ matrix.target }}
 
     - name: Upload utility artifacts
       uses: actions/upload-artifact@v1
       with:
-        name: ${{ matrix.output }}-${{ github.ref }}-${{ matrix.target }}
-        path: ${{ matrix.output }}-${{ github.ref }}-${{ matrix.target }}
+        name: ${{ matrix.output }}-${{ matrix.target }}
+        path: ${{ matrix.output }}-${{ matrix.target }}
 
     - name: Upload utility binary to release
       if: ${{ startsWith(github.ref, 'refs/tags/v') }}
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ${{ matrix.output }}-${{ github.ref }}-${{ matrix.target }}
-        asset_name: ${{ matrix.output }}-${{ github.ref }}-${{ matrix.target }}
+        file: ${{ matrix.output }}-${{ matrix.target }}
+        asset_name: ${{ matrix.output }}-${{ matrix.target }}
         tag: ${{ github.ref }}
         overwrite: true
 
