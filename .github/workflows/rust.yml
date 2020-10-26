@@ -16,12 +16,21 @@ jobs:
     
     steps:
       - uses: actions/checkout@v2
+      - uses: FranzDiebold/github-env-vars-action@v1.2.1
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
           target: thumbv6m-none-eabi
           override: true
           components: llvm-tools-preview
+          
+      - name: Configure caching 
+        uses: actions/cache@v2
+        with:
+          key: ubuntu-latest-thumbv6m-none-eabi
+          path: |
+            ${{ env.HOME }}/.cargo"
+            ./target
 
       - uses: actions-rs/install@v0.1
         with:
@@ -47,8 +56,8 @@ jobs:
         with:
           name: rlfw-${GITHUB_REF_SLUG}.tgz
           path: |
-            *.bin
-            *.uf2
+            rlfw/*.bin
+            rlfw/*.uf2
   
 
   build-cli:
@@ -83,6 +92,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: FranzDiebold/github-env-vars-action@v1.2.1
       
     - name: Configure toolchain
       uses: actions-rs/toolchain@v1
@@ -91,17 +101,13 @@ jobs:
         target:  ${{ matrix.target }}
         override: true
     
-    - name: Configure cargo cache 
-      uses: actions/cache@v1
+    - name: Configure caching 
+      uses: actions/cache@v2
       with:
-        key: cargo-${{ matrix.os }}-${{ matrix.target }}
-        path: ${{ env.HOME }}/.cargo"
-
-    - name: Configure target cache
-      uses: actions/cache@v1
-      with:
-        key: target-${{ matrix.os }}-${{ matrix.target }}
-        path: ./target
+        key: ${{ matrix.os }}-${{ matrix.target }}
+        path: |
+          ${{ env.HOME }}/.cargo"
+          ./target
 
     - name: Install libusb (brew)
       if: ${{ matrix.os == 'macos-latest' }}
