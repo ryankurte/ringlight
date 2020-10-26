@@ -4,8 +4,6 @@
 
 A SAMD21/WS2812 based, low-cost and low-difficulty USB webcam ringlight. Designed for a logitech streamcam (though there is no reason not to create other attachments) and controlled via USB/HID because, why not.
 
-The ringlight firmware runs on a seed xiao board, with WS2812 LEDs connected to pin 10. Firmware can be downloaded from the [releases](https://github.com/ryankurte/ringlight/releases/latest) page and installed via the uf2 bootloader. The ringlight control utility can be installed from source via `cargo install rlctl`, or downloaded from the [releases](https://github.com/ryankurte/ringlight/releases/latest) page.
-
 ![IMG_0097](https://user-images.githubusercontent.com/860620/97136092-1002b900-17b7-11eb-9710-67b2d2f5ec6b.jpg)
 ![IMG_0098](https://user-images.githubusercontent.com/860620/97136097-109b4f80-17b7-11eb-9a4b-84f59c66cc1e.jpg)
 
@@ -17,10 +15,20 @@ The ringlight firmware runs on a seed xiao board, with WS2812 LEDs connected to 
 
 ## Getting Started
 
-- [rlfw](rlfw/) contains the SAMD21 ringlight firmware
-- [rlclt](rlctl/) contains a ringlight control utility
+The ringlight firmware runs on a seed xiao board with WS2812 LEDs connected to pin 10, and can be installed via the uf2 bootloader. Both the device firmware and control utility can be downloaded from the [releases](https://github.com/ryankurte/ringlight/releases/latest) page, while the control utility can be installed via `cargo install rlctl` if preferred.
 
-Usage:
+### Setup
+
+First you need to connect a set of WS2812 LEDs to the xiao, linking GND->GND, VCC->5V and Pin 10 -> DI (Data In).
+You can then load the firmware on the device by:
+
+- Download the latest `rlfw.uf2` file from the [releases](https://github.com/ryankurte/ringlight/releases/latest) page
+- Connect the xiao board to your computer via USB
+  - This _should_ connect as a disk drive 
+  - If this does not occur you may need to short the GND/RST pads on the back of the board twice in quick succession
+- Copy the `rlfw.uf2` firmware file onto the drive
+
+### Usage
 
 - `rlctl set-brightness BRIGHTNESS` to set brightness
 - `rlctl set-rgb R G B` to set RGB colour output
@@ -39,6 +47,8 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="1209", ATTR{idProduct}=="fff1", MODE="0660", 
 
 ## Development
 
+- [rlfw](rlfw/) contains the SAMD21 ringlight firmware
+- [rlclt](rlctl/) contains a ringlight control utility
 
 ### Dependencies
 
@@ -49,7 +59,6 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="1209", ATTR{idProduct}=="fff1", MODE="0660", 
 ### Compiling / Flashing Firmware
 
 Note that `memory.x` must be edited to remove the flash offset if your xiao-m0 does not currently have the [bootloader](https://github.com/Seeed-Studio/ArduinoCore-samd/blob/master/bootloaders/XIAOM0/bootloader-XIAO_m0-v3.7.0-33-g90ff611-dirty.bin) loaded.
-In most cases you should be able to download the linked uf2 firmware above and copy this onto the disk presented by the xiao device. To enter bootloader mode you may need to short the GND/RESET pads on the back of the device twice in quick succession.
 
 Other options:
 
