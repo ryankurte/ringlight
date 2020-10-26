@@ -12,9 +12,6 @@ env:
 jobs:
   build-fw:
     runs-on: ubuntu-latest
-    defaults:
-     run:
-      working-directory: rlfw
     
     steps:
       - uses: actions/checkout@v2
@@ -59,9 +56,6 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
-    defaults:
-     run:
-       working-directory: rlctl
 
     strategy:
       fail-fast: false
@@ -134,10 +128,12 @@ jobs:
         args: --manifest-path=rlctl/Cargo.toml --target ${{ matrix.target }} --release
     
     - name: Create archives
-      run: tar -cvf rlctl-${{ matrix.target }}.tgz -C target/${{ matrix.target }}/release/ ${{ matrix.output }}
+      run: tar -cvf rlctl-${{ matrix.target }}.tgz -C rlctl/target/${{ matrix.target }}/release/ ${{ matrix.output }}
       
     - name: Upload utility artifacts
       uses: actions/upload-artifact@v1
       with:
         name: rlctl-${{ matrix.target }}.tgz
         path: target/rlctl-${{ matrix.target }}.tgz
+
+
