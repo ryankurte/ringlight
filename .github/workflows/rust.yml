@@ -31,7 +31,7 @@ jobs:
           use-tool-cache: true
       - uses: actions-rs/install@v0.1
         with:
-          crate: uf2conv-rs
+          crate: uf2conv
           version: latest
           use-tool-cache: true
 
