@@ -36,7 +36,6 @@ jobs:
           use-tool-cache: true
 
       - name: Build firmware
-        uses: actions-rs/cargo@v1
         run: |
           cd rlfw
           cargo objcopy --target=thumbv6m-none-eabi --release -- -O binary rlfw-${GITHUB_REF_SLUG}.bin
