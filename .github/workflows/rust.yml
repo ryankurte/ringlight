@@ -49,8 +49,10 @@ jobs:
       - name: Upload firmware artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: rlfw-$GITHUB_REF_SLUG.uf2
+          name: rlfw-$GITHUB_REF_SLUG.tgz
           path: |
+            rlfw/target/thumbv6m-none-eabi/release/rlfw
+            *.bin
             *.uf2
   
 
@@ -135,15 +137,13 @@ jobs:
         use-cross: ${{ matrix.use_cross }}
         command: build
         args: --manifest-path=rlctl/Cargo.toml --target ${{ matrix.target }} --release
-    
-    - name: Create archives
-      run: tar -cvf rlctl-${{ matrix.target }}.tgz -C rlctl/target/${{ matrix.target }}/release/ ${{ matrix.output }}
       
     - name: Upload utility artifacts
       uses: actions/upload-artifact@v1
       with:
         name: rlctl-${{ matrix.target }}.tgz
-        path: rlctl-${{ matrix.target }}.tgz
+        path: |
+          rlctl/target/${{ matrix.target }}/release/${{ matrix.output }}
 
   release:
     name: Create release
