@@ -30,7 +30,7 @@ jobs:
           key: ubuntu-latest-thumbv6m-none-eabi
           path: |
             ${{ env.HOME }}/.cargo"
-            ./target
+            rlfw/target
 
       - uses: actions-rs/install@v0.1
         with:
@@ -47,14 +47,14 @@ jobs:
       - name: Build firmware
         run: |
           cd rlfw
-          cargo objcopy --target=thumbv6m-none-eabi --release -- -O binary rlfw-$GITHUB_REF_NAME_SLUG.bin
-          uf2conv rlfw-$GITHUB_REF_NAME_SLUG.bin --base 0x2000 --output rlfw-$GITHUB_REF_NAME_SLUG.uf2
+          cargo objcopy --target=thumbv6m-none-eabi --release -- -O binary rlfw-${{ GITHUB_REF_NAME_SLUG }}.bin
+          uf2conv rlfw-${{ GITHUB_REF_NAME_SLUG }}.bin --base 0x2000 --output rlfw-${{ GITHUB_REF_NAME_SLUG }}.uf2
           ls
 
       - name: Upload firmware artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: rlfw-$GITHUB_REF_NAME_SLUG.tgz
+          name: rlfw-${{ GITHUB_REF_NAME_SLUG }}.tgz
           path: |
             rlfw/*.bin
             rlfw/*.uf2
@@ -107,7 +107,7 @@ jobs:
         key: ${{ matrix.os }}-${{ matrix.target }}
         path: |
           ${{ env.HOME }}/.cargo"
-          ./target
+          rlctl/target
 
     - name: Install libusb (brew)
       if: ${{ matrix.os == 'macos-latest' }}
@@ -152,7 +152,7 @@ jobs:
     - name: Upload utility artifacts
       uses: actions/upload-artifact@v1
       with:
-        name: rlctl-$GITHUB_REF_NAME_SLUG-${{ matrix.target }}
+        name: rlctl-${{ GITHUB_REF_NAME_SLUG }}-${{ matrix.target }}
         path: ${{ matrix.output }}
 
   release:
