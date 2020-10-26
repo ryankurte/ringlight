@@ -45,7 +45,7 @@ jobs:
       - name: Generate .bin file
         run: objcopy rlfw/target/thumbv6m-none-eabi/release/rlfw -I elf32-little -O binary rlfw-$GITHUB_REF_SLUG.bin
 
-      - name: Generate u2f file
+      - name: Generate .u2f file
         run: uf2conv rlfw-$GITHUB_REF_SLUG.bin --base 0x2000 --output rlfw-$GITHUB_REF_SLUG.uf2
      
       - name: Upload firmware artifacts
@@ -116,7 +116,7 @@ jobs:
     
     - name: Install libusb (apt)
       if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: apt install -y libusb-dev
+      run: sudo apt install -y libusb-dev
 
     - name: Install libusb (vcpkg)
       if: ${{ matrix.os == 'windows-latest' }}
@@ -124,6 +124,7 @@ jobs:
       with:
         vcpkgArguments: libusb
         vcpkgTriplet: x64-windows-static-md
+        vcpkgGitCommitId: 56fffbe
 
     - name: Build release
       uses: actions-rs/cargo@v1
@@ -133,10 +134,10 @@ jobs:
         args: --manifest-path=rlctl/Cargo.toml --target ${{ matrix.target }} --release
     
     - name: Create archives
-      run: tar -cvf rlctl/target/rlcli-${{ matrix.target }}.tgz -C rlctl/target/${{ matrix.target }}/release/ ${{ matrix.output }}
+      run: tar -cvf rlctl-${{ matrix.target }}.tgz -C rlctl/target/${{ matrix.target }}/release/ ${{ matrix.output }}
       
     - name: Upload utility artifacts
       uses: actions/upload-artifact@v1
       with:
-        name: rlcli-${{ matrix.target }}.tgz
-        path: target/rlcli-${{ matrix.target }}.tgz
+        name: rlctl-${{ matrix.target }}.tgz
+        path: target/rlctl-${{ matrix.target }}.tgz
