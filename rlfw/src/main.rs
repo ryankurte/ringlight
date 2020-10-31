@@ -85,7 +85,7 @@ const NUM_LEDS: usize = 24;
 static mut LED_DATA: [RGB8; NUM_LEDS] = [RGB8::new(0xef, 0xeb, 0xd8); NUM_LEDS];
 
 /// Shared LED brightness
-static mut LED_BRIGHTNESS: u8 = 10;
+static mut LED_BRIGHTNESS: u8 = 0;
 
 static mut RESTART_BOOTLOAD: Option<usize> = None;
 
@@ -277,7 +277,7 @@ fn handle_command(cmd: &[u8]) {
                     for v in &mut LED_DATA {
                         *v = RGB8::new(0xef, 0xeb, 0xd8);
                     }
-                    LED_BRIGHTNESS = 10;
+                    LED_BRIGHTNESS = 0;
                 }
             });
         }
